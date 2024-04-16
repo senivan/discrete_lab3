@@ -42,9 +42,9 @@ class Client:
     def read_handler(self): 
         while True:
             message = self.s.recv(1024)
-            # decrypt message with the secrete key
+            # decrypt message with the secrete key - done
 
-            message = decrypt(message, self.private_key)
+            message = decrypt(message, self.server_secret)
             print(message)
 
     def write_handler(self):
