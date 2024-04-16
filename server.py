@@ -1,6 +1,6 @@
 import socket
 import threading
-import RSA
+from RSA import generateRSAkeys
 
 
 class Server:
@@ -19,7 +19,7 @@ class Server:
         self.s.listen(100)
 
         # generate keys - done
-        server_pub_key, server_priv_key = RSA.generateRSAkeys()
+        server_pub_key, server_priv_key = generateRSAkeys()
         self.public_key = server_pub_key
         self.private_key = server_priv_key
 
