@@ -1,7 +1,6 @@
 import random
 import math
-import base64
-import ast
+import json
 class KeyGen:
     __PRIME_LIST = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
                      31, 37, 41, 43, 47, 53, 59, 61, 67,
@@ -65,11 +64,11 @@ class KeyGen:
 
 def generateRSAkeys():
     E = 65537 # very common value for open exponent
-    P = KeyGen.get_big_prime(40)
-    Q = KeyGen.get_big_prime(40)
+    P = KeyGen.get_big_prime(128)
+    Q = KeyGen.get_big_prime(128)
     while math.gcd((P-1)*(Q-1), E) != 1:
-        P = KeyGen.get_big_prime(40)
-        Q = KeyGen.get_big_prime(40)
+        P = KeyGen.get_big_prime(256)
+        Q = KeyGen.get_big_prime(256)
         
     PHI = (P-1)*(Q-1)
     N = P*Q
@@ -83,18 +82,18 @@ def generateRSAkeys():
 
 def encrypt(message, public_key):
     n, key = public_key
-    print(message)
     arr = [pow(ord(char), key, n) for char in message]
-    print(arr)
-    return base64.b64encode(bytes(str(arr), 'ascii'))
-
+    # return base64.b64encode(bytes(str(arr), 'ascii'))
+    return bytes(str(arr), 'ascii').hex().encode()
 
 def decrypt(encoded, private_key):
     try:
         n, key = private_key
-        
-        message_decoded = base64.b64decode(encoded).decode()
-        arr = ast.literal_eval(message_decoded)
+        # message_decoded = base64.b64decode(encoded).decode()
+        if isinstance(encoded, bytes):
+            encoded = encoded.decode()
+        message_decoded = bytes.fromhex(encoded).decode()
+        arr = json.loads(message_decoded)
         message_decrypted = ""
         text = [chr(pow(char, key, n)) for char in arr]
         

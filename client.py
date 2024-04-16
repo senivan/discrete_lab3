@@ -24,25 +24,27 @@ class Client:
         self.private_key = client_private_key
         print("Keys generated!")
         # exchange public keys
-        message = self.s.recv(1024).decode()
+        message = self.s.recv(8096).decode()
         self.server_key = json.loads(message.split(": ")[1])
         send = ("KEY: "+json.dumps(self.public_key)).encode('utf-8')
         self.s.send(send)
         print("Keys exchanged!")
         # receive the encrypted secret key
-        serv_secret = self.s.recv(2048).decode()
-        self.server_secret = decrypt(serv_secret, self.private_key)
-        print("Secret key received!")
-        
+        # serv_secret = self.s.recv(131072).decode()
+        # self.server_secret = ast.literal_eval(decrypt(serv_secret, self.private_key))
+        # print("Secret key received!")
+        # We do not need server secret key
         message_handler = threading.Thread(target=self.read_handler,args=())
         message_handler.start()
         input_handler = threading.Thread(target=self.write_handler,args=())
         input_handler.start()
 
-    def read_handler(self): 
+    def read_handler(self):
         while True:
-            message = self.s.recv(1024)
-            # decrypt message with the secrete key
+            message = self.s.recv(16192)
+            # decrypt message with the secrete key - done
+
+            # validate hash here.
 
             message = decrypt(message, self.private_key)
             print(message)
@@ -53,9 +55,10 @@ class Client:
 
             # encrypt message with the secrete key
 
-            # ...
+            # generate validating hash here.
+            message = encrypt(message, self.server_key)
 
-            self.s.send(message.encode())
+            self.s.send(message)
 
 if __name__ == "__main__":
     cl = Client("127.0.0.1", 9001, "b_g")

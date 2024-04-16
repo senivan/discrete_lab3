@@ -43,11 +43,11 @@ class Server:
             # encrypt the secret with the clients public key
 
             
-            c.send(encrypt(json.dumps(self.private_key), self.username_lookup[c][1]))
-
+            # c.send(encrypt(json.dumps(self.private_key), self.username_lookup[c][1]))
+            # Client has no need of our secret key.
             # send the encrypted secret to a client 
 
-            print("Secret key sent!(encrypted ofc)")
+            # print("Secret key sent!(encrypted ofc)")
 
             threading.Thread(target=self.handle_client,args=(c,addr,)).start()
 
@@ -55,18 +55,28 @@ class Server:
         for client in self.clients: 
 
             # encrypt the message
+            # generate hash here
+            to_send = encrypt(msg, self.username_lookup[client][1])
 
-            # ...
-
-            client.send(msg.encode())
+            client.send(to_send)
 
     def handle_client(self, c: socket, addr): 
-        while True:
-            msg = c.recv(1024)
+        try:
+            while True:
+                msg = c.recv(16192).decode()
+                msg = decrypt(msg, self.private_key)
 
-            for client in self.clients:
-                if client != c:
-                    client.send(msg)
+                # validate message integrity here
+
+                for client in self.clients:
+                    if client != c:
+                        msg = encrypt(msg, self.username_lookup[client][1])
+                        client.send(msg)
+        except Exception as e:
+            print(f"Clients {addr} disconnected")
+            self.clients.remove(c)
+            self.broadcast(f"{self.username_lookup[c][0]} has left")
+            c.close()
 
 if __name__ == "__main__":
     s = Server(9001)
