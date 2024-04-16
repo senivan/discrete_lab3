@@ -22,6 +22,7 @@ class Server:
         server_pub_key, server_priv_key = generateRSAkeys()
         self.public_key = server_pub_key
         self.private_key = server_priv_key
+        print("Keys generated!")
 
         while True:
             c, addr = self.s.accept()
