@@ -1,5 +1,7 @@
 import socket
 import threading
+from RSA import generateRSAkeys
+
 
 class Server:
 
@@ -9,12 +11,17 @@ class Server:
         self.clients = []
         self.username_lookup = {}
         self.s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    
+
 
     def start(self):
         self.s.bind((self.host, self.port))
         self.s.listen(100)
 
-        # generate keys ...
+        # generate keys - done
+        server_pub_key, server_priv_key = generateRSAkeys()
+        self.public_key = server_pub_key
+        self.private_key = server_priv_key
 
         while True:
             c, addr = self.s.accept()
