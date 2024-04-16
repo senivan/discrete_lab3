@@ -30,7 +30,9 @@ class Client:
         self.s.send(send)
         print("Keys exchanged!")
         # receive the encrypted secret key
-
+        serv_secret = self.s.recv(2048).decode()
+        self.server_secret = decrypt(serv_secret, self.private_key)
+        print("Secret key received!")
         
         message_handler = threading.Thread(target=self.read_handler,args=())
         message_handler.start()
@@ -39,10 +41,10 @@ class Client:
 
     def read_handler(self): 
         while True:
-            message = self.s.recv(1024).decode()
+            message = self.s.recv(1024)
             # decrypt message with the secrete key
 
-            message = decrypt(message, self.private_key, self.public_key)
+            message = decrypt(message, self.private_key)
             print(message)
 
     def write_handler(self):

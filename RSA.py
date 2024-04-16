@@ -1,5 +1,7 @@
 import random
 import math
+import base64
+import ast
 class KeyGen:
     __PRIME_LIST = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
                      31, 37, 41, 43, 47, 53, 59, 61, 67,
@@ -63,11 +65,11 @@ class KeyGen:
 
 def generateRSAkeys():
     E = 65537 # very common value for open exponent
-    P = KeyGen.get_big_prime(1024)
-    Q = KeyGen.get_big_prime(1024)
+    P = KeyGen.get_big_prime(40)
+    Q = KeyGen.get_big_prime(40)
     while math.gcd((P-1)*(Q-1), E) != 1:
-        P = KeyGen.get_big_prime(1024)
-        Q = KeyGen.get_big_prime(1024)
+        P = KeyGen.get_big_prime(40)
+        Q = KeyGen.get_big_prime(40)
         
     PHI = (P-1)*(Q-1)
     N = P*Q
@@ -77,14 +79,25 @@ def generateRSAkeys():
     # Using the first equating we get:
     # e*d = 1 mod(((p-1)/gcd(p-1, q-1))(q-1))
     D = pow(E, -1, PHI)
-    return ((N, E), D)
+    return ((N, E), (N, D))
 
 def encrypt(message, public_key):
-    m = int.from_bytes(message.encode('utf-8'), byteorder="little")
-    n, e = public_key
-    return (m**e) % n
+    n, key = public_key
+    print(message)
+    arr = [pow(ord(char), key, n) for char in message]
+    print(arr)
+    return base64.b64encode(bytes(str(arr), 'ascii'))
 
-def decrypt(message:int, private_key:int, public_key):
-    n, e = public_key
-    m = (message ** private_key) % n
-    return m.to_bytes(math.ceil(m.bit_length() / 8), byteorder="little")
+
+def decrypt(encoded, private_key):
+    try:
+        n, key = private_key
+        
+        message_decoded = base64.b64decode(encoded).decode()
+        arr = ast.literal_eval(message_decoded)
+        message_decrypted = ""
+        text = [chr(pow(char, key, n)) for char in arr]
+        
+        return message_decrypted.join(text)
+    except TypeError as e:
+        raise e
