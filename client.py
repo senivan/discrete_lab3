@@ -2,6 +2,7 @@ import socket
 import threading
 from RSA import generateRSAkeys, encrypt, decrypt
 import json
+import ast
 class Client:
     def __init__(self, server_ip: str, port: int, username: str) -> None:
         self.server_ip = server_ip
@@ -31,7 +32,9 @@ class Client:
         print("Keys exchanged!")
         # receive the encrypted secret key
         serv_secret = self.s.recv(2048).decode()
-        self.server_secret = decrypt(serv_secret, self.private_key)
+        self.server_secret = ast.literal_eval(decrypt(serv_secret, self.private_key))
+        print(self.server_secret)
+        print(isinstance(self.server_secret, str))
         print("Secret key received!")
         
         message_handler = threading.Thread(target=self.read_handler,args=())
@@ -53,9 +56,9 @@ class Client:
 
             # encrypt message with the secrete key
 
-            # ...
+            message = encrypt(message, self.server_secret)
 
-            self.s.send(message.encode())
+            self.s.send(message)
 
 if __name__ == "__main__":
     cl = Client("127.0.0.1", 9001, "b_g")

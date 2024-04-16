@@ -56,9 +56,9 @@ class Server:
 
             # encrypt the message
 
-            # ...
+            msg = encrypt(msg, self.public_key)
 
-            client.send(msg.encode())
+            client.send(msg)
 
     def handle_client(self, c: socket, addr): 
         while True:

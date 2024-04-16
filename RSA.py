@@ -85,14 +85,12 @@ def encrypt(message, public_key):
     n, key = public_key
     print(message)
     arr = [pow(ord(char), key, n) for char in message]
-    print(arr)
     return base64.b64encode(bytes(str(arr), 'ascii'))
 
 
 def decrypt(encoded, private_key):
     try:
         n, key = private_key
-        
         message_decoded = base64.b64decode(encoded).decode()
         arr = ast.literal_eval(message_decoded)
         message_decrypted = ""
