@@ -25,13 +25,13 @@ class Client:
         self.private_key = client_private_key
         print("Keys generated!")
         # exchange public keys
-        message = self.s.recv(1024).decode()
+        message = self.s.recv(8096).decode()
         self.server_key = json.loads(message.split(": ")[1])
         send = ("KEY: "+json.dumps(self.public_key)).encode('utf-8')
         self.s.send(send)
         print("Keys exchanged!")
         # receive the encrypted secret key
-        serv_secret = self.s.recv(2048).decode()
+        serv_secret = self.s.recv(131072).decode()
         self.server_secret = ast.literal_eval(decrypt(serv_secret, self.private_key))
         print(self.server_secret)
         print(isinstance(self.server_secret, str))
@@ -42,12 +42,14 @@ class Client:
         input_handler = threading.Thread(target=self.write_handler,args=())
         input_handler.start()
 
-    def read_handler(self): 
+    def read_handler(self):
         while True:
-            message = self.s.recv(1024)
+            message = self.s.recv(16192)
             # decrypt message with the secrete key - done
 
-            message = decrypt(message, self.server_secret)
+            # validate hash here.
+
+            message = decrypt(message, self.private_key)
             print(message)
 
     def write_handler(self):
@@ -56,7 +58,7 @@ class Client:
 
             # encrypt message with the secrete key
 
-            message = encrypt(message, self.server_secret)
+            message = encrypt(message, self.server_key)
 
             self.s.send(message)
 

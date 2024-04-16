@@ -56,16 +56,20 @@ class Server:
 
             # encrypt the message
 
-            msg = encrypt(msg, self.public_key)
+            to_send = encrypt(msg, self.username_lookup[client][1])
 
-            client.send(msg)
+            client.send(to_send)
 
     def handle_client(self, c: socket, addr): 
         while True:
-            msg = c.recv(1024)
+            msg = c.recv(16192).decode()
+            msg = decrypt(msg, self.private_key)
+
+            # validate message integrity here
 
             for client in self.clients:
                 if client != c:
+                    msg = encrypt(msg, self.username_lookup[client][1])
                     client.send(msg)
 
 if __name__ == "__main__":

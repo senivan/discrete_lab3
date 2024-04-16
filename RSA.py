@@ -65,11 +65,11 @@ class KeyGen:
 
 def generateRSAkeys():
     E = 65537 # very common value for open exponent
-    P = KeyGen.get_big_prime(40)
-    Q = KeyGen.get_big_prime(40)
+    P = KeyGen.get_big_prime(128)
+    Q = KeyGen.get_big_prime(128)
     while math.gcd((P-1)*(Q-1), E) != 1:
-        P = KeyGen.get_big_prime(40)
-        Q = KeyGen.get_big_prime(40)
+        P = KeyGen.get_big_prime(256)
+        Q = KeyGen.get_big_prime(256)
         
     PHI = (P-1)*(Q-1)
     N = P*Q
