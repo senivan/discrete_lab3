@@ -31,12 +31,10 @@ class Client:
         self.s.send(send)
         print("Keys exchanged!")
         # receive the encrypted secret key
-        serv_secret = self.s.recv(131072).decode()
-        self.server_secret = ast.literal_eval(decrypt(serv_secret, self.private_key))
-        print(self.server_secret)
-        print(isinstance(self.server_secret, str))
-        print("Secret key received!")
-        
+        # serv_secret = self.s.recv(131072).decode()
+        # self.server_secret = ast.literal_eval(decrypt(serv_secret, self.private_key))
+        # print("Secret key received!")
+        # We do not need server secret key
         message_handler = threading.Thread(target=self.read_handler,args=())
         message_handler.start()
         input_handler = threading.Thread(target=self.write_handler,args=())

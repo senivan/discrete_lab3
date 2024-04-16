@@ -43,11 +43,11 @@ class Server:
             # encrypt the secret with the clients public key
 
             
-            c.send(encrypt(json.dumps(self.private_key), self.username_lookup[c][1]))
-
+            # c.send(encrypt(json.dumps(self.private_key), self.username_lookup[c][1]))
+            # Client has no need of our secret key.
             # send the encrypted secret to a client 
 
-            print("Secret key sent!(encrypted ofc)")
+            # print("Secret key sent!(encrypted ofc)")
 
             threading.Thread(target=self.handle_client,args=(c,addr,)).start()
 

@@ -83,7 +83,6 @@ def generateRSAkeys():
 
 def encrypt(message, public_key):
     n, key = public_key
-    print(message)
     arr = [pow(ord(char), key, n) for char in message]
     return base64.b64encode(bytes(str(arr), 'ascii'))
 
