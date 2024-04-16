@@ -78,3 +78,13 @@ def generateRSAkeys():
     # e*d = 1 mod(((p-1)/gcd(p-1, q-1))(q-1))
     D = pow(E, -1, PHI)
     return ((N, E), D)
+
+def encrypt(message, public_key):
+    m = int.from_bytes(message.encode('utf-8'), byteorder="little")
+    n, e = public_key
+    return (m**e) % n
+
+def decrypt(message:int, private_key:int, public_key):
+    n, e = public_key
+    m = (message ** private_key) % n
+    return m.to_bytes(math.ceil(m.bit_length() / 8), byteorder="little")
