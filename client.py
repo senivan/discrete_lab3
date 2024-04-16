@@ -2,7 +2,6 @@ import socket
 import threading
 from RSA import generateRSAkeys, encrypt, decrypt
 import json
-import ast
 class Client:
     def __init__(self, server_ip: str, port: int, username: str) -> None:
         self.server_ip = server_ip
