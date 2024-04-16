@@ -55,6 +55,7 @@ class Client:
 
             # encrypt message with the secrete key
 
+            # generate validating hash here.
             message = encrypt(message, self.server_key)
 
             self.s.send(message)
